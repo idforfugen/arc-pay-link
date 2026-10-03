@@ -2,6 +2,10 @@
 
 <img src="./arc-pay-link-logo.png" alt="ArcPay Link logo" width="96" />
 
+[![Test](https://github.com/idforfugen/arc-pay-link/actions/workflows/test.yml/badge.svg)](https://github.com/idforfugen/arc-pay-link/actions/workflows/test.yml)
+
+**Live app:** <https://idforfugen.github.io/arc-pay-link/>
+
 ArcPay Link is a minimal, non-custodial payment-link app for native USDC on
 [Arc](https://www.arc.io/). A recipient enters an Arc address and an amount,
 shares the generated URL, and the payer signs a direct native-USDC transfer in
@@ -34,7 +38,25 @@ The canonical reference is the [Arc documentation](https://docs.arc.io/arc/refer
 - Display the connected wallet's native USDC balance
 - Submit a direct native-USDC transfer without custody or an intermediary contract
 - Poll for the transaction receipt and link to Arc Explorer
+- Share requests through the native mobile share sheet, with a clipboard fallback
+- Guide imToken and other mobile-wallet users to open requests in a DApp browser
 - Responsive static interface with no build step
+
+## Mobile wallets
+
+ArcPay Link uses the standard EIP-1193 provider exposed by an EVM wallet. On
+mobile, open the payment URL inside the wallet's DApp browser. For imToken,
+open **Browser**, paste the ArcPay Link URL, and connect from the payment card.
+
+## Tests
+
+The dependency-free test suite covers Arc chain configuration, 18-decimal USDC
+conversion, recipient validation, payment-link round trips, and balance
+formatting.
+
+```bash
+npm test
+```
 
 ## Run locally
 

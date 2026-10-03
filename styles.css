@@ -434,6 +434,18 @@ footer {
   background: var(--paper);
 }
 
+.button-secondary {
+  color: var(--paper);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.link-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
 .empty-request {
   padding: 54px 20px;
   border: 1px dashed rgba(255, 255, 255, 0.14);
@@ -541,6 +553,32 @@ footer {
   color: rgba(240, 243, 232, 0.58);
   background: rgba(255, 255, 255, 0.05);
   font-size: 10px;
+}
+
+.wallet-help {
+  margin-bottom: 18px;
+  padding: 15px;
+  border: 1px solid rgba(200, 255, 104, 0.2);
+  border-radius: 12px;
+  background: rgba(200, 255, 104, 0.07);
+}
+
+.wallet-help strong {
+  color: var(--mint);
+  font-size: 12px;
+}
+
+.wallet-help p {
+  margin: 7px 0 12px;
+  color: rgba(240, 243, 232, 0.62);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.wallet-help .button {
+  min-height: 38px;
+  padding-inline: 13px;
+  font-size: 11px;
 }
 
 .transaction-link {
@@ -657,6 +695,11 @@ footer a {
   .link-result {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .link-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .how-it-works {

@@ -149,7 +149,10 @@
               <span class="result-label">Your payment link</span>
               <code id="linkOutput"></code>
             </div>
-            <button class="button button-copy" id="copyButton" type="button">Copy link</button>
+            <div class="link-actions">
+              <button class="button button-secondary" id="shareButton" type="button">Share</button>
+              <button class="button button-copy" id="copyButton" type="button">Copy link</button>
+            </div>
           </div>
         </section>
 
@@ -196,6 +199,13 @@
             </dl>
             <div class="payment-warning">
               Keep a small USDC balance available for Arc network fees.
+            </div>
+            <div class="wallet-help" id="walletHelp" hidden>
+              <strong>Using imToken or another mobile wallet?</strong>
+              <p>Open this payment link inside the wallet's DApp browser, then connect again.</p>
+              <button class="button button-secondary" id="copyPageButton" type="button">
+                Copy this payment link
+              </button>
             </div>
             <button class="button button-primary button-full" id="payButton" type="button">
               Connect wallet to pay
