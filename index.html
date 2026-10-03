@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Create and pay simple USDC payment links on Arc mainnet. Non-custodial, contract-free, and open source."
+    />
+    <meta name="theme-color" content="#081712" />
+    <title>ArcPay Link — USDC payment links on Arc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="ArcPay Link home">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>ArcPay Link</span>
+      </a>
+      <div class="header-actions">
+        <span class="network-pill"><i></i> Arc Mainnet</span>
+        <button class="button button-quiet" id="connectButton" type="button">
+          Connect wallet
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">A tiny payment primitive for Arc</div>
+        <h1>Ask for USDC.<br /><span>Send a link.</span></h1>
+        <p class="hero-copy">
+          Create a clean payment request and let anyone settle it directly on
+          Arc. No account, custody, or payment contract in the middle.
+        </p>
+        <div class="hero-facts" aria-label="Product highlights">
+          <span><b>USDC</b> native gas</span>
+          <span><b>&lt;1s</b> finality</span>
+          <span><b>0%</b> app fee</span>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="ArcPay Link workspace">
+        <div class="mode-tabs" role="tablist" aria-label="Payment link modes">
+          <button
+            class="mode-tab is-active"
+            id="createTab"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="createPanel"
+          >
+            Create request
+          </button>
+          <button
+            class="mode-tab"
+            id="payTab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="payPanel"
+          >
+            Pay request
+          </button>
+        </div>
+
+        <section class="panel" id="createPanel" role="tabpanel" aria-labelledby="createTab">
+          <div class="panel-heading">
+            <div>
+              <span class="step-number">01</span>
+              <h2>Shape the request</h2>
+            </div>
+            <p>The payment details live in the URL. Funds never touch this app.</p>
+          </div>
+
+          <form id="requestForm" novalidate>
+            <label class="field field-wide">
+              <span>Recipient address</span>
+              <input
+                id="recipientInput"
+                name="recipient"
+                type="text"
+                inputmode="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="0x…"
+                required
+              />
+              <small>Any EVM address that can receive native USDC on Arc.</small>
+            </label>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Amount</span>
+                <div class="amount-input">
+                  <input
+                    id="amountInput"
+                    name="amount"
+                    type="text"
+                    inputmode="decimal"
+                    autocomplete="off"
+                    placeholder="25.00"
+                    required
+                  />
+                  <b>USDC</b>
+                </div>
+              </label>
+
+              <label class="field">
+                <span>Label <em>optional</em></span>
+                <input
+                  id="labelInput"
+                  name="label"
+                  type="text"
+                  maxlength="64"
+                  placeholder="Design sprint"
+                />
+              </label>
+            </div>
+
+            <div class="form-message" id="formMessage" role="status" aria-live="polite"></div>
+
+            <button class="button button-primary button-full" type="submit">
+              Generate payment link
+              <span aria-hidden="true">↗</span>
+            </button>
+          </form>
+
+          <div class="link-result" id="linkResult" hidden>
+            <div>
+              <span class="result-label">Your payment link</span>
+              <code id="linkOutput"></code>
+            </div>
+            <button class="button button-copy" id="copyButton" type="button">Copy link</button>
+          </div>
+        </section>
+
+        <section
+          class="panel"
+          id="payPanel"
+          role="tabpanel"
+          aria-labelledby="payTab"
+          hidden
+        >
+          <div class="panel-heading">
+            <div>
+              <span class="step-number">02</span>
+              <h2>Review and pay</h2>
+            </div>
+            <p>Your wallet shows the final transaction before anything is sent.</p>
+          </div>
+
+          <div class="empty-request" id="emptyRequest">
+            <div class="empty-icon" aria-hidden="true">↙</div>
+            <h3>No payment request loaded</h3>
+            <p>Open a generated ArcPay link or create one in the first tab.</p>
+          </div>
+
+          <div class="payment-card" id="paymentCard" hidden>
+            <span class="payment-label" id="paymentLabel">Payment request</span>
+            <div class="payment-amount">
+              <strong id="paymentAmount">0.00</strong>
+              <span>USDC</span>
+            </div>
+            <dl class="payment-details">
+              <div>
+                <dt>Network</dt>
+                <dd>Arc Mainnet</dd>
+              </div>
+              <div>
+                <dt>To</dt>
+                <dd><code id="paymentRecipient"></code></dd>
+              </div>
+              <div id="walletBalanceRow" hidden>
+                <dt>Your balance</dt>
+                <dd id="walletBalance">—</dd>
+              </div>
+            </dl>
+            <div class="payment-warning">
+              Keep a small USDC balance available for Arc network fees.
+            </div>
+            <button class="button button-primary button-full" id="payButton" type="button">
+              Connect wallet to pay
+            </button>
+            <div class="form-message" id="paymentMessage" role="status" aria-live="polite"></div>
+            <a class="transaction-link" id="transactionLink" target="_blank" rel="noopener noreferrer" hidden>
+              View transaction on Arc Explorer ↗
+            </a>
+          </div>
+        </section>
+      </section>
+
+      <section class="how-it-works">
+        <div>
+          <span class="section-kicker">How it works</span>
+          <h2>Just enough infrastructure.</h2>
+        </div>
+        <ol>
+          <li>
+            <span>1</span>
+            <div><b>Create</b><p>Add an Arc address, amount, and an optional label.</p></div>
+          </li>
+          <li>
+            <span>2</span>
+            <div><b>Share</b><p>Send the generated URL through any channel you trust.</p></div>
+          </li>
+          <li>
+            <span>3</span>
+            <div><b>Settle</b><p>The payer signs a native USDC transfer in their own wallet.</p></div>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <span>Open source · Non-custodial · Built for Arc</span>
+      <a href="https://docs.arc.io" target="_blank" rel="noopener noreferrer">Arc documentation ↗</a>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
