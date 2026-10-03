@@ -1,5 +1,7 @@
 # ArcPay Link
 
+<img src="./arc-pay-link-logo.png" alt="ArcPay Link logo" width="96" />
+
 ArcPay Link is a minimal, non-custodial payment-link app for native USDC on
 [Arc](https://www.arc.io/). A recipient enters an Arc address and an amount,
 shares the generated URL, and the payer signs a direct native-USDC transfer in

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-labelledby="title desc">
+  <title id="title">ArcPay Link logo</title>
+  <desc id="desc">A mint geometric letter A and payment link nodes on a dark green rounded square.</desc>
+  <rect width="480" height="480" rx="112" fill="#081712"/>
+  <path d="M122 344 226 124c6-13 25-13 31 0l101 220" fill="none" stroke="#c8ff68" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M169 276h142" fill="none" stroke="#c8ff68" stroke-width="36" stroke-linecap="round"/>
+  <circle cx="122" cy="344" r="24" fill="#f0f3e8" stroke="#c8ff68" stroke-width="12"/>
+  <circle cx="358" cy="344" r="24" fill="#f0f3e8" stroke="#c8ff68" stroke-width="12"/>
+</svg>
