@@ -36,6 +36,7 @@ The canonical reference is the [Arc documentation](https://docs.arc.io/arc/refer
 - Validate EVM addresses and Arc-native USDC amounts locally
 - Add or switch to Arc mainnet through the connected EVM wallet
 - Display the connected wallet's native USDC balance
+- Show the full recipient address before opening the wallet for approval
 - Submit a direct native-USDC transfer without custody or an intermediary contract
 - Poll for the transaction receipt and link to Arc Explorer
 - Share requests through the native mobile share sheet, with a clipboard fallback

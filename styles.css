@@ -540,10 +540,10 @@ footer {
 
 .payment-details code {
   display: block;
-  overflow: hidden;
   font-family: "DM Mono", monospace;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .payment-warning {

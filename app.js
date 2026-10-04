@@ -81,7 +81,7 @@ function renderPaymentRequest(request) {
   elements.paymentCard.hidden = false;
   elements.paymentLabel.textContent = request.label || "Payment request";
   elements.paymentAmount.textContent = request.amount;
-  elements.paymentRecipient.textContent = shortenAddress(request.recipient);
+  elements.paymentRecipient.textContent = request.recipient;
   elements.paymentRecipient.title = request.recipient;
   elements.transactionLink.hidden = true;
   setMessage(elements.paymentMessage);
