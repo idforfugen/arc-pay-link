@@ -35,6 +35,8 @@ The canonical reference is the [Arc documentation](https://docs.arc.io/arc/refer
 - Generate a shareable payment URL from an address, amount, and optional label
 - Validate EVM addresses and Arc-native USDC amounts locally
 - Add or switch to Arc mainnet through the connected EVM wallet
+- Verify the wallet actually switched to Arc before constructing a payment request
+- Restore an already-authorized wallet session and track account/network changes
 - Display the connected wallet's native USDC balance
 - Show the full recipient address before opening the wallet for approval
 - Submit a direct native-USDC transfer without custody or an intermediary contract
@@ -51,9 +53,9 @@ open **Browser**, paste the ArcPay Link URL, and connect from the payment card.
 
 ## Tests
 
-The dependency-free test suite covers Arc chain configuration, 18-decimal USDC
-conversion, recipient validation, payment-link round trips, and balance
-formatting.
+The dependency-free test suite covers Arc chain identification, 18-decimal USDC
+conversion, EVM value limits, recipient validation, payment-link round trips,
+and balance formatting.
 
 ```bash
 npm test
@@ -100,6 +102,7 @@ shared payment links continue to work.
   optional label.
 - Keep enough USDC in the payer wallet to cover Arc network fees.
 - Verify the recipient address before sharing or paying a request.
+- Use a dot for decimal amounts; commas are rejected rather than guessed.
 
 ## License
 

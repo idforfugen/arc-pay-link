@@ -36,7 +36,7 @@
         <span>ArcPay Link</span>
       </a>
       <div class="header-actions">
-        <span class="network-pill"><i></i> Arc Mainnet</span>
+        <span class="network-pill" id="networkPill"><i></i><span>Arc Mainnet</span></span>
         <button class="button button-quiet" id="connectButton" type="button">
           Connect wallet
         </button>
@@ -122,6 +122,7 @@
                   />
                   <b>USDC</b>
                 </div>
+                <small>Use a dot for decimals; commas are rejected to avoid ambiguity.</small>
               </label>
 
               <label class="field">

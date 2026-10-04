@@ -5,6 +5,7 @@ import {
   ARC_CHAIN,
   buildPaymentUrl,
   formatBalance,
+  isArcChainId,
   normalizeAmount,
   parsePaymentUrl,
   validateRecipient,
@@ -19,17 +20,35 @@ test("Arc mainnet configuration is explicit", () => {
   assert.equal(ARC_CHAIN.currency.decimals, 18);
 });
 
+test("recognizes Arc chain IDs without trusting formatting", () => {
+  assert.equal(isArcChainId("0x13b2"), true);
+  assert.equal(isArcChainId("5042"), true);
+  assert.equal(isArcChainId(5042), true);
+  assert.equal(isArcChainId("0x1"), false);
+  assert.equal(isArcChainId("not-a-chain"), false);
+});
+
 test("normalizes Arc native USDC into 18-decimal units", () => {
   assert.deepEqual(normalizeAmount("1.25"), {
     display: "1.25",
     units: 1_250_000_000_000_000_000n,
   });
-  assert.equal(normalizeAmount("0,01").units, 10_000_000_000_000_000n);
+  assert.throws(() => normalizeAmount("0,01"), /commas are rejected/);
+  assert.throws(() => normalizeAmount("1,000"), /commas are rejected/);
 });
 
 test("rejects zero and over-precise amounts", () => {
   assert.throws(() => normalizeAmount("0"), /greater than zero/);
   assert.throws(() => normalizeAmount("1.0000000000000000001"), /no more than 18 decimals/);
+  assert.throws(() => normalizeAmount((1n << 256n).toString()), /EVM transaction limit/);
+});
+
+test("accepts the largest amount representable by an EVM transaction value", () => {
+  const maxValue = (1n << 256n) - 1n;
+  const whole = maxValue / 10n ** 18n;
+  const fraction = (maxValue % 10n ** 18n).toString().padStart(18, "0");
+
+  assert.equal(normalizeAmount(`${whole}.${fraction}`).units, maxValue);
 });
 
 test("validates EVM recipients and rejects the zero address", () => {

@@ -115,6 +115,15 @@ footer {
   box-shadow: 0 0 0 4px rgba(56, 161, 105, 0.13);
 }
 
+.network-pill.is-wrong {
+  color: var(--danger);
+}
+
+.network-pill.is-wrong i {
+  background: var(--danger);
+  box-shadow: 0 0 0 4px rgba(154, 49, 43, 0.13);
+}
+
 .button {
   display: inline-flex;
   align-items: center;

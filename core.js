@@ -10,9 +10,23 @@ export const ARC_CHAIN = Object.freeze({
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const ADDRESS_PATTERN = /^0x[0-9a-fA-F]{40}$/;
 const AMOUNT_PATTERN = /^(?:0|[1-9]\d*)(?:\.(\d{1,18}))?$/;
+const MAX_UINT256 = (1n << 256n) - 1n;
+
+export function isArcChainId(value) {
+  try {
+    return BigInt(value) === BigInt(ARC_CHAIN.idDecimal);
+  } catch {
+    return false;
+  }
+}
 
 export function normalizeAmount(value) {
-  const normalized = String(value).trim().replace(",", ".");
+  const normalized = String(value).trim();
+
+  if (normalized.includes(",")) {
+    throw new Error("Use a dot as the decimal separator; commas are rejected to avoid ambiguity.");
+  }
+
   const match = normalized.match(AMOUNT_PATTERN);
 
   if (!match) {
@@ -24,6 +38,10 @@ export function normalizeAmount(value) {
 
   if (units <= 0n) {
     throw new Error("The payment amount must be greater than zero.");
+  }
+
+  if (units > MAX_UINT256) {
+    throw new Error("The payment amount exceeds the EVM transaction limit.");
   }
 
   return { display: normalized, units };

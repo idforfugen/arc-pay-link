@@ -2,6 +2,7 @@ import {
   ARC_CHAIN,
   buildPaymentUrl as createPaymentUrl,
   formatBalance,
+  isArcChainId,
   normalizeAmount,
   parsePaymentUrl,
   validateRecipient,
@@ -9,6 +10,7 @@ import {
 
 const elements = {
   connectButton: document.querySelector("#connectButton"),
+  networkPill: document.querySelector("#networkPill"),
   createTab: document.querySelector("#createTab"),
   payTab: document.querySelector("#payTab"),
   createPanel: document.querySelector("#createPanel"),
@@ -50,6 +52,13 @@ function shortenAddress(address) {
 function setMessage(target, message = "", kind = "error") {
   target.textContent = message;
   target.classList.toggle("success", kind === "success");
+}
+
+function updateNetworkUi(chainId) {
+  const onArc = isArcChainId(chainId);
+  elements.networkPill.classList.toggle("is-wrong", !onArc);
+  elements.networkPill.querySelector("span").textContent = onArc ? "Arc Mainnet" : "Wrong network";
+  return onArc;
 }
 
 function showMode(mode) {
@@ -114,11 +123,16 @@ async function switchToArc() {
       ],
     });
   }
+
+  const activeChainId = await window.ethereum.request({ method: "eth_chainId" });
+  if (!updateNetworkUi(activeChainId)) {
+    throw new Error("The wallet did not switch to Arc Mainnet. Check the selected network and try again.");
+  }
 }
 
 async function connectWallet() {
   if (!window.ethereum) {
-    throw new Error("Install an EVM browser wallet such as MetaMask to continue.");
+    throw new Error("Open this page in an EVM wallet DApp browser such as imToken, Rabby, or MetaMask.");
   }
 
   const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -133,12 +147,22 @@ async function connectWallet() {
 async function updateWalletUi() {
   elements.connectButton.textContent = state.account ? shortenAddress(state.account) : "Connect wallet";
 
+  let onArc = true;
+  if (window.ethereum) {
+    try {
+      const chainId = await window.ethereum.request({ method: "eth_chainId" });
+      onArc = updateNetworkUi(chainId);
+    } catch {
+      onArc = updateNetworkUi(null);
+    }
+  }
+
   if (!state.request) return;
 
   elements.payButton.textContent = state.account ? `Pay ${state.request.amount} USDC` : "Connect wallet to pay";
   elements.walletHelp.hidden = Boolean(window.ethereum);
 
-  if (!state.account || !window.ethereum) {
+  if (!state.account || !window.ethereum || !onArc) {
     elements.walletBalanceRow.hidden = true;
     return;
   }
@@ -183,6 +207,11 @@ async function sendPayment() {
     if (!state.account) await connectWallet();
     await switchToArc();
 
+    const accounts = await window.ethereum.request({ method: "eth_accounts" });
+    state.account = accounts?.[0] || null;
+    if (!state.account) throw new Error("Reconnect the wallet and select an account before paying.");
+    await updateWalletUi();
+
     elements.payButton.textContent = "Confirm in wallet…";
     const transactionHash = await window.ethereum.request({
       method: "eth_sendTransaction",
@@ -222,7 +251,7 @@ async function sendPayment() {
   } finally {
     state.busy = false;
     elements.payButton.disabled = false;
-    updateWalletUi();
+    await updateWalletUi();
   }
 }
 
@@ -325,7 +354,14 @@ if (window.ethereum?.on) {
     await updateWalletUi();
   });
 
-  window.ethereum.on("chainChanged", async () => {
+  window.ethereum.on("chainChanged", async (chainId) => {
+    const onArc = updateNetworkUi(chainId);
+    if (state.request && !state.busy) {
+      setMessage(
+        elements.paymentMessage,
+        onArc ? "" : "Wallet changed networks. ArcPay Link will request Arc Mainnet before payment.",
+      );
+    }
     await updateWalletUi();
   });
 }
@@ -336,4 +372,16 @@ if (requestFromUrl) {
   showMode("pay");
 }
 
-updateWalletUi();
+async function restoreWalletSession() {
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+      state.account = accounts?.[0] || null;
+    } catch {
+      state.account = null;
+    }
+  }
+  await updateWalletUi();
+}
+
+restoreWalletSession();
